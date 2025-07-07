@@ -1,21 +1,6 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, KeyboardButtonPollType
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, KeyboardButtonPollType, BotCommand
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from typing import Tuple
-
-# start_kb = ReplyKeyboardMarkup(
-#     keyboard=[
-#         [
-#             KeyboardButton(text="Ключи 🔑"),
-#             KeyboardButton(text="Баланс 💰"),
-#         ],
-#         [
-#             KeyboardButton(text="Поддержка 👨‍💻"),
-#             KeyboardButton(text="О нас"),
-#         ]
-#     ],
-#     resize_keyboard=True,
-#     input_field_placeholder='Что вас интересует?'
-# )
 
 del_kb = ReplyKeyboardRemove()
 
@@ -33,20 +18,6 @@ start_kb3.row(KeyboardButton(text="Пополнить баланс 💸"))
 cancel_btn = ReplyKeyboardBuilder()
 cancel_btn.attach(start_kb2)
 cancel_btn.row(KeyboardButton(text="Отменить"))
-
-# test_kb = ReplyKeyboardMarkup(
-#     keyboard=[
-#         [
-#             KeyboardButton(text="Создать опрос", request_poll=KeyboardButtonPollType()),
-#         ],
-#         [
-#             KeyboardButton(text="Отправить номер ☎️", request_contact=True),
-#             KeyboardButton(text="Отправить локацию 📍", request_location=True)
-#         ]
-#     ],
-#     resize_keyboard=True,
-# )
-
 
 def get_keyboard(
         *btns: str,

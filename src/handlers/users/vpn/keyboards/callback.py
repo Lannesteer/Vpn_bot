@@ -9,7 +9,7 @@ def get_callback_btns(
 ):
     keyboard = InlineKeyboardBuilder()
 
-    # btns['❌ Закрыть меню'] = 'close_menu'
+    btns['❌ Закрыть меню'] = 'close_menu'
 
     for text, data in btns.items():
 

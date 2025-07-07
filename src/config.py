@@ -2,8 +2,39 @@ import os
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
+from environs import Env
 
 load_dotenv()
+
+env = Env()
+env.read_env('.env')
+
+
+@dataclass
+class BotToken:
+    access_token = env.str("BOT_TOKEN")
+
+
+@dataclass
+class DbConfig:
+    host = env.str("DB_HOST")
+    port = env.str("DB_PORT")
+    name = env.str("DB_NAME")
+    user = env.str("DB_USER")
+    password = env.str("DB_PASS")
+    ssl = env.str("SSL_PATH")
+
+
+@dataclass
+class RedisConfig:
+    host = env.str("REDIS_HOST")
+    port = env.str("REDIS_PORT")
+
+
+@dataclass
+class CeleryConfig:
+    broker: str = f'redis://{RedisConfig.host}:{RedisConfig.port}/0'
+    backend: str = f'redis://{RedisConfig.host}:{RedisConfig.port}/0'
 
 
 @dataclass
@@ -21,53 +52,3 @@ vpn_config = {
         api_url=os.environ.get("API_URL_GERMANY"),
         cert_sha256=os.environ.get("CERT_SHA256_GERMANY")
     )}
-
-
-@dataclass
-class BotToken:
-    access_token: str
-
-
-bot_token = BotToken(access_token=os.environ.get("BOT_TOKEN"))
-
-
-@dataclass
-class DBConfig:
-    host: str
-    port: str
-    name: str
-    user: str
-    password: str
-
-
-dbconfig = DBConfig(
-    host=os.environ.get("DB_HOST"),
-    port=os.environ.get("DB_PORT"),
-    name=os.environ.get("DB_NAME"),
-    user=os.environ.get("DB_USER"),
-    password=os.environ.get("DB_PASS")
-)
-
-
-@dataclass
-class RedisConfig:
-    host: str
-    port: str
-
-
-redis_config = RedisConfig(
-    host=os.environ.get("REDIS_HOST"),
-    port=os.environ.get("REDIS_PORT")
-)
-
-
-@dataclass
-class CeleryConfig:
-    broker: str
-    backend: str
-
-
-celery_config = CeleryConfig(
-    broker=f'redis://{redis_config.host}:{redis_config.port}/0',
-    backend=f'redis://{redis_config.host}:{redis_config.port}/0'
-)

@@ -5,51 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import types
 
 from .keyboards.callback import servers_info
-# from src.bot.services.manager import get_vpn_clients
-from .schemas import KeyCreate, UserCreate
-from src.bot.utils import get_ping
-from src.base_class import BaseService
-from src.bot.models import Key
+from database.base_class import BaseService
 
 
-class KeyService(BaseService[Key]):
-    def __init__(self, session: AsyncSession):
-        super().__init__(Key, session)
+class VpnService:
 
-    '''Get user keys from Outline'''
-
-    @staticmethod
-    async def get_user_keys(user_id):
-        vpn_clients = await get_vpn_clients(servers_info)
-
-        btns = {'➕Получить ключ': 'get_keys'}
-
-        async def __fetch_keys(country, client):
-            _keys = await client.get_keys()
-            return country, _keys
-
-        results = await asyncio.gather(
-            *(__fetch_keys(country, client)
-              for country, client
-              in vpn_clients.items()
-              )
-        )
-
-        for country, keys in results:
-            server_data = servers_info.get(country)
-            for key in keys:
-                if str(user_id) == key.name:
-                    btns.update(
-                        {
-                            (key.key_id,
-                             f'{server_data["country"]} '
-                             f'{server_data["country_flag"]}, '
-                             f'100GB, 200₽/месяц'
-                             ): f'user_{user_id}'
-                        }
-                    )
-
-        return btns
+    async def get_user_keys(self, user_id):
+        awa
 
     @staticmethod
     async def get_servers_list(data: str):
@@ -150,5 +112,4 @@ class KeyService(BaseService[Key]):
         return {"response": "success"}
 
 
-async def get_key_service(session: AsyncSession) -> KeyService:
-    return KeyService(session)
+vpn_service = VpnService()

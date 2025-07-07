@@ -2,7 +2,7 @@ import asyncio
 
 from src.celery_worker.celery_worker import celery_app
 
-from bot.handlers.keys.schemas import UserUpdate
+from handlers.users.vpn import UserUpdate
 
 
 @celery_app.task

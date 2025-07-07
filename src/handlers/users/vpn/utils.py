@@ -39,6 +39,11 @@ async def get_ping(ip: str) -> float:
         return -1
 
 
+async def gb_limit_converter(key):
+    if key.data_limit is not None:
+        gb_limit = round(key.data_limit / (1024 ** 3))
+        return gb_limit
+
 # async def get_ping(host: str) -> float:
 #     """Проверяет пинг к серверу (возвращает ms или -1, если ошибка)"""
 #
