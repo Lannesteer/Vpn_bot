@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from database.base_model import Base
+from src.database.base_model import Base
 
 
 class Key(Base):
@@ -16,5 +16,5 @@ class Key(Base):
     status: Mapped[bool] = mapped_column(default=True)
     expiry_date: Mapped[datetime] = mapped_column(default=datetime.utcnow, nullable=False)
 
-    user: Mapped["User"] = relationship(back_populates="vpn")
-    server = relationship(back_populates="server")
+    user = relationship("User", back_populates="keys")
+    server = relationship("Server", back_populates="keys")

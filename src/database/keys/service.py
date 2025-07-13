@@ -1,5 +1,5 @@
-from database.base_class import BaseService
-from database.keys.models import Key
+from src.database.base_class import BaseService
+from src.database.keys.models import Key
 
 
 class KeyService(BaseService[Key]):

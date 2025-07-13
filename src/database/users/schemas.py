@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class UserCreate(BaseModel):
-    tg_user_id: str
+    telegram_id: int
 
     model_config = ConfigDict(from_attributes=True)
 

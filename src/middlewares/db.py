@@ -1,6 +1,6 @@
 from aiogram import BaseMiddleware
 
-from database.session import AsyncDatabase
+from src.database.session import AsyncDatabase
 
 
 class SessionMiddleware(BaseMiddleware):

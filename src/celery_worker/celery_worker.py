@@ -1,10 +1,10 @@
 from celery import Celery
 
-from src.config import celery_config
+from src.config import CeleryConfig
 
 celery_app = Celery(
-    'tasks', broker=celery_config.broker,
-    backend=celery_config.backend
+    'tasks', broker=CeleryConfig.broker,
+    backend=CeleryConfig.backend
 )
 
 celery_app.conf.task_routes = {

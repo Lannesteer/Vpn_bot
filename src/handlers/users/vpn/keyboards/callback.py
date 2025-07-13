@@ -1,54 +1,73 @@
-from aiogram.types import InlineKeyboardButton
+from dataclasses import dataclass
+
+from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from src.handlers.users.start.text import StartButtons
+from src.handlers.users.vpn.text import VpnButton
 
-def get_callback_btns(
-        *,
-        btns: dict[str, str],
-        sizes: tuple[int, ...] = (1, 1),
-):
-    keyboard = InlineKeyboardBuilder()
 
-    btns['❌ Закрыть меню'] = 'close_menu'
+class KeysCallBack(CallbackData, prefix="Vpn"):
+    action: str
 
-    for text, data in btns.items():
 
-        if isinstance(text, tuple):
-            keyboard.add(InlineKeyboardButton(
-                text=", ".join(str(item) for item in text[1:] if item is not None),
-                callback_data=data)
+def keys_kb(keys=None):
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text=VpnButton.GetKey,
+        callback_data=KeysCallBack(
+            action="get_key"
+        )
+    )
+    if keys:
+        for key in keys:
+            builder.button(
+                text=f"{key.server.country},100GB,{key.server.price}₽/месяц.",
+                callback_data=f'Key{key.id}'
             )
-        else:
-            keyboard.add(InlineKeyboardButton(text=text, callback_data=data))
 
-    return keyboard.adjust(*sizes).as_markup()
+    builder.button(text=StartButtons.CancelButton, callback_data="cancel")
+
+    builder.adjust(1)
+
+    return builder.as_markup()
 
 
-country_btns = {
-    "Польша 🇵🇱": 'country_poland',
-    "Германия 🇩🇪": 'country_germany'
+@dataclass
+class VpnCallbacks:
+    KeysCB = KeysCallBack
+
+
+@dataclass
+class VpnKeyboardsCallBacks:
+    Keys = keys_kb
+
+
+country = {
+    "Польша 🇵🇱": 'poland',
+    "Германия 🇩🇪": 'germany'
 }
 
-
 servers_info = {
-            "poland": {
-                "id": 0,
-                "country": "Польша",
-                "ip": "91.239.148.249",
-                "country_flag": "🇵🇱",
-                "type": "🌐 Outline",
-                "rating": "NA",
-                "price": "200",
-                "trial_period": "30 мин.",
-            },
-            "germany": {
-                "id": 1,
-                "country": "Германия",
-                "ip": "185.140.12.144",
-                "country_flag": "🇩🇪",
-                "type": "🌐 Outline",
-                "rating": "NA",
-                "price": "200",
-                "trial_period": "30 мин.",
-            },
-        }
+    "poland": {
+        "id": 0,
+        "country": "Польша",
+        "ip": "91.239.148.249",
+        "country_flag": "🇵🇱",
+        "type": "🌐 Outline",
+        "rating": "NA",
+        "price": "200",
+        "trial_period": "30 мин.",
+    },
+    "germany": {
+        "id": 1,
+        "country": "Германия",
+        "ip": "185.140.12.144",
+        "country_flag": "🇩🇪",
+        "type": "🌐 Outline",
+        "rating": "NA",
+        "price": "200",
+        "trial_period": "30 мин.",
+    },
+}

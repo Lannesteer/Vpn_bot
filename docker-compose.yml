@@ -1,11 +1,18 @@
 version: '3.8'
 
 services:
+  bot:
+    build: .
+    command: ["python", "-m", "app.py"]
+    restart: always
+
+    env_file:
+      - .env
 
   celery:
     build: .
     restart: always
     command: ["celery", "-A", "src.celery_worker.celery_worker", "worker", "--loglevel=info"]
-
+    user: "1000:1000"
     env_file:
       - .env

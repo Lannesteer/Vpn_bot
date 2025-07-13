@@ -1,8 +1,9 @@
-class StartButton:
-    KeysButton = "Ключи 🔑"
-    BalanceButton = "Баланс 💰"
-    SupportButton = "Поддержка 👨‍💻"
+class StartButtons:
+    KeysButton = "🔑 Ключи"
+    BalanceButton = "💰 Баланс"
+    SupportButton = "👨‍💻 Поддержка"
     AboutButton = "О нас"
+    CancelButton = "❌ Закрыть меню"
 
 
 class StartTexts:

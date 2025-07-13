@@ -11,8 +11,9 @@ env.read_env('.env')
 
 
 @dataclass
-class BotToken:
+class BotConfig:
     access_token = env.str("BOT_TOKEN")
+    superusers_ids = list(map(int, env.list("SUPERUSER_IDS")))
 
 
 @dataclass
@@ -29,12 +30,13 @@ class DbConfig:
 class RedisConfig:
     host = env.str("REDIS_HOST")
     port = env.str("REDIS_PORT")
+    password = env.str("REDIS_PASSWORD")
 
 
 @dataclass
 class CeleryConfig:
-    broker: str = f'redis://{RedisConfig.host}:{RedisConfig.port}/0'
-    backend: str = f'redis://{RedisConfig.host}:{RedisConfig.port}/0'
+    broker: str = f'redis://:{RedisConfig.password}@{RedisConfig.host}:{RedisConfig.port}/0'
+    backend: str = f'redis://:{RedisConfig.password}@{RedisConfig.host}:{RedisConfig.port}/0'
 
 
 @dataclass

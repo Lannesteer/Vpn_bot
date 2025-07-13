@@ -6,9 +6,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-
-from src.database.base_model import Base
 from src.config import DbConfig
+from src.database.base_model import Base
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
@@ -33,6 +32,7 @@ if config.config_file_name is not None:
 from src.database.users import models
 from src.database.keys import models
 from src.database.servers import models
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
