@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   bot:
-    build: .
+    image: lannesteer/vpn-bot:latest
     command: ["python", "-m", "app.py"]
     restart: always
 
@@ -10,7 +10,7 @@ services:
       - .env
 
   celery:
-    build: .
+    image: lannesteer/vpn-bot:latest
     restart: always
     command: ["celery", "-A", "src.celery_worker.celery_worker", "worker", "--loglevel=info"]
     user: "1000:1000"

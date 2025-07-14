@@ -9,12 +9,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Загружаем .env из Secrets
+      - name: Логин на DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Билд и Пуш Image
         run: |
-           echo "${{secrets.BOT_ENV_PROD}}" > .env
-
-      - name: Билд
-        run: docker build -t vpn-bot
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/vpn-bot:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/vpn-bot:latest
       - name: Деплой
         uses: appleboy/ssh-action@master
         with:
@@ -22,10 +25,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}    
           key: ${{ secrets.SERVER_SSH_KEY }}     
           script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/vpn-bot:latest
             cd /root/Vpn_bot
-            git pull origin main
             echo "${{ secrets.BOT_ENV_PROD }}" > .env
-            docker build -t vpn-bot .
             docker-compose down
             docker-compose up -d
             docker system prune -f
