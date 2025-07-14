@@ -16,8 +16,8 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_BOT_KEY }}
       - name: Билд и Пуш Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/vpn-bot:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/vpn-bot:latest
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/vpn-bot:latest .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/vpn-bot:latest
       - name: Деплой
         uses: appleboy/ssh-action@master
         with:
@@ -25,7 +25,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}    
           key: ${{ secrets.SERVER_SSH_KEY }}     
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/vpn-bot:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/vpn-bot:latest
             cd /root/Vpn_bot
             echo "${{ secrets.BOT_ENV_PROD }}" > .env
             docker-compose down
