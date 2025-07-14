@@ -3,7 +3,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.servers.service import server_service
+from src.database.servers.service import server_service
 from src.database.users.service import user_service
 from .keyboards.callback import VpnKeyboardsCallBacks, VpnCallbacks
 from aiogram import Router

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from database.session import session_handler
+from src.database.session import session_handler
 from src.database.base_class import BaseService
 from src.database.servers.models import Server
 
