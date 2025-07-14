@@ -4,12 +4,20 @@ from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import types
 
+from database.servers.service import server_service
 from .keyboards.callback import servers_info
 from database.base_class import BaseService
-
-
-# class VpnService:
 #
+#
+# class VpnService:
+#     # async def get_servers_by_country(self, country: str):
+#     #     servers = await server_service.get_servers_by_country(country)
+#     #     servers_lst = []
+#     #     for server in servers:
+#     #         servers_lst .append(f'{server.country}, {server.price}')
+#     #
+
+
 #     async def get_user_keys(self, user):
 #     #     user_keys = await user.keys
 #     #
@@ -113,4 +121,4 @@ from database.base_class import BaseService
 #         return {"response": "success"}
 #
 #
-# vpn_service = VpnService()
+vpn_service = VpnService()

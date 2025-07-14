@@ -14,10 +14,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_BOT_KEY }}
+
       - name: Билд и Пуш Image
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/vpn-bot:latest .
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/vpn-bot:latest
+
       - name: Деплой
         uses: appleboy/ssh-action@master
         with:

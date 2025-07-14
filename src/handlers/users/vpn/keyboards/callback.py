@@ -7,24 +7,48 @@ from src.handlers.users.start.text import StartButtons
 from src.handlers.users.vpn.text import VpnButton
 
 
-class KeysCallBack(CallbackData, prefix="Vpn"):
+class GetKeysCallBack(CallbackData, prefix="VpnKeys"):
     action: str
 
 
-def keys_kb(keys=None):
-    builder = InlineKeyboardBuilder()
+class ChooseCountryCallback(CallbackData, prefix="VpnCountry"):
+    action: str
 
-    builder.button(
-        text=VpnButton.GetKey,
-        callback_data=KeysCallBack(
-            action="get_key"
+
+class ChooseServerCallback(CallbackData, prefix="VpnServer"):
+    action: str
+
+
+def keys_kb(get_key=False, keys=None, countries=None, servers=None):
+    builder = InlineKeyboardBuilder()
+    if get_key:
+        builder.button(
+            text=VpnButton.GetKey,
+            callback_data=ChooseCountryCallback(
+                action="get_key"
+            )
         )
-    )
-    if keys:
+    elif keys:
         for key in keys:
             builder.button(
-                text=f"{key.server.country},100GB,{key.server.price}₽/месяц.",
+                text=f"{key.server.country}, 100GB, {key.server.price}₽/месяц",
                 callback_data=f'Key{key.id}'
+            )
+    elif countries:
+        for country in countries:
+            builder.button(
+                text=country.country,
+                callback_data=ChooseServerCallback(
+                    action=country.country
+                )
+            )
+    elif servers:
+        for server in servers:
+            builder.button(
+                text=f"{server.country}, 100GB, {server.price}₽/месяц",
+                callback_data=ChooseServerCallback(
+                    action=server.country
+                )
             )
 
     builder.button(text=StartButtons.CancelButton, callback_data="cancel")
@@ -36,7 +60,9 @@ def keys_kb(keys=None):
 
 @dataclass
 class VpnCallbacks:
-    KeysCB = KeysCallBack
+    KeysCB = GetKeysCallBack
+    CountryCB = ChooseCountryCallback
+    ServersCB = ChooseServerCallback
 
 
 @dataclass
