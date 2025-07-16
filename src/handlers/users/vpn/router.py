@@ -3,6 +3,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from filters.admin_filters import AdminFilter
 from src.config import vpn_config
 from src.database.servers.service import server_service
 from src.database.users.service import user_service
@@ -16,6 +17,8 @@ from .utils import vpn_utils
 from ..start.text import StartButtons
 
 router = Router()
+
+router.message.filter(AdminFilter())
 
 
 @router.message(StateFilter('*'), F.text == StartButtons.KeysButton)
