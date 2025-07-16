@@ -15,7 +15,7 @@ def check_balance(telegram_id, key_id):
 
     async def async_task():
         user = await user_service.get_user_by_telegram_id(telegram_id)
-        key = await key_service.id(key_id)
+        key = await key_service.get_key(key_id)
         if user.balance < 200:
             await key_service.delete(key.id)
             await vpn_utils.notify_users(

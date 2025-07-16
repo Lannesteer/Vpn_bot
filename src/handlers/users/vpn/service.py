@@ -32,7 +32,7 @@ class VpnService:
 
             )
         )
-        check_balance.apply_async(args=[user.id, key.id], countdown=10)
+        check_balance.apply_async(args=[user.id, key.key_id], countdown=10)
 
         return f'{key.access_url}&prefix=POST%20'
 
