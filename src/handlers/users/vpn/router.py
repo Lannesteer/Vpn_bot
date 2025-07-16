@@ -3,21 +3,19 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from src.config import vpn_config
 from src.database.servers.service import server_service
 from src.database.users.service import user_service
 from .keyboards.callback import VpnKeyboardsCallBacks, VpnCallbacks
 from aiogram import Router
 
+from .service import vpn_service
 from .state import VpvState
 from .text import VpnTexts
+from .utils import vpn_utils
 from ..start.text import StartButtons
 
 router = Router()
-
-
-# @router.callback_query(F.data.startswith("close_menu"))
-# async def clouse_menu(callback_query: types.CallbackQuery):
-#     await callback_query.message.delete()
 
 
 @router.message(StateFilter('*'), F.text == StartButtons.KeysButton)
@@ -30,75 +28,60 @@ async def get_user_keys(message: types.Message,
     )
 
 
+@router.callback_query(VpnCallbacks.KeysCB.filter(), StateFilter('*'))
+async def get_key(call: CallbackQuery, callback_data: VpnCallbacks.KeysCB, state: FSMContext):
+    if callback_data.action == "get_key":
+        countries = await server_service.all()
+        await call.message.edit_text(
+            VpnTexts.ServerLocation,
+            reply_markup=VpnKeyboardsCallBacks.Keys(countries=countries)
+        )
+        await state.set_state(VpvState.ChooseCountry)
+
+
 @router.callback_query(VpnCallbacks.CountryCB.filter(), StateFilter('*'))
 async def select_country(call: CallbackQuery,
+                         callback_data: VpnCallbacks.CountryCB,
                          state: FSMContext):
-    countries = await server_service.all()
+    await state.update_data(country=callback_data.country)
+    servers = await server_service.get_servers_by_country(country=callback_data.country)
     await call.message.edit_text(
-        VpnTexts.ServerLocation,
-        reply_markup=VpnKeyboardsCallBacks.Keys(countries=countries)
-    )
-    await state.set_state(VpvState.Country)
-
-
-@router.callback_query(VpnCallbacks.ServersCB.filter(), StateFilter(VpvState.Country))
-async def select_server(call: types.CallbackQuery,
-                        callback_data: VpnCallbacks.CountryCB,
-                        state: FSMContext):
-    await state.update_data(country=callback_data.action)
-    servers = await server_service.get_servers_by_country(country=callback_data.action)
-    await call.message.edit_text(
-        text=VpnTexts.Server,
+        text=VpnTexts.SelectServer,
         reply_markup=VpnKeyboardsCallBacks.Keys(servers=servers)
     )
-    await state.set_state(VpvState.Server)
+    await state.set_state(VpvState.ChooseServer)
 
-# @router.callback_query(F.data.startswith("country_"))
-# async def server_lst(callback_query: types.CallbackQuery,
-#                      state: FSMContext,
-#                      ):
-#     servers_btns = await service.get_servers_list(callback_query.data)
-#     await callback_query.message.edit_text("Выберите сервер:")
-#
-#     await callback_query.message.edit_reply_markup(
-#         reply_markup=get_callback_btns(btns=servers_btns)
-#     )
-#     await state.set_state(GetKey.server_info)
-#
-#
-# @router.callback_query(F.data.startswith("server_info_"))
-# async def server_info(callback_query: types.CallbackQuery,
-#                       state: FSMContext,):
-#     get_info = await service.get_server_info(callback_query.data)
-#
-#     await callback_query.message.edit_text(get_info[0], parse_mode="HTML")
-#     await callback_query.message.edit_reply_markup(
-#         reply_markup=get_callback_btns(btns=get_info[1])
-#     )
-#     await state.set_state(GetKey.key)
-#
-#
-# @router.callback_query(F.data.startswith("get_key_"))
-# async def you_key(callback_query: types.CallbackQuery,
-#                   state: FSMContext,
-#                   user):
-#     access_url, text = await service.get_vpn_key(user.telegram_id, callback_query)
-#
-#     await callback_query.message.edit_text(text, parse_mode="HTML")
-#     await callback_query.message.answer(f'`{access_url}`', parse_mode='MarkdownV2')
-#
-#     await state.clear()
 
-# @router.message(F.video)
-# async def get_video_id(message: types.Message):
-#     video_id = message.video.file_id
-#     await message.answer(f"Вот file_id видео: `{video_id}`")
-#
-#
-# @router.message(StateFilter('*'), F.text.lower().contains("тест"))
-# async def test(message: types.Message, state: FSMContext):
-#     await message.bot.send_video(
-#         chat_id=message.chat.id,
-#         video='BAACAgIAAxkBAAIL9WfLYBH2Uq7sbR4xW6kqPBf0YdgtAAIXaAACa_5YSvMUFscvj3HdNgQ',
-#         caption="Вот инструкция по использованию бота"
-#     )
+@router.callback_query(VpnCallbacks.ServersCB.filter(), StateFilter(VpvState.ChooseServer))
+async def select_server(call: types.CallbackQuery,
+                        callback_data: VpnCallbacks.ServersCB,
+                        state: FSMContext):
+    server = await server_service.get_server_by_country(callback_data.server)
+    ip_server = vpn_config.get(f'{callback_data.server}').api
+    ping = await vpn_utils.get_ping(ip_server)
+    await call.message.edit_text(
+        text=VpnTexts.ServerInfo.format(
+            Server=f"{server.country}, 100GB, {server.price}₽/месяц",
+            Type=server.type,
+            Country=server.country,
+            Ping=ping,
+            Price=server.price
+        ),
+        reply_markup=VpnKeyboardsCallBacks.Keys(server_info=True)
+    )
+
+
+@router.callback_query(VpnCallbacks.ServerInfoCB.filter(), StateFilter(VpvState.ChooseServer))
+async def server_info_get_key(call: CallbackQuery,
+                              callback_data: VpnCallbacks.ServerInfoCB,
+                              state: FSMContext,
+                              user):
+    data = await state.get_data()
+    country = data.get("country")
+    if callback_data.action == "get_key":
+        server = await server_service.get_server_by_country(country)
+        vpn_key = await vpn_service.configurate_vpn_key(server, user)
+        await call.message.delete()
+        await call.message.answer(text=VpnTexts.KeyDone.format(Price=server.price))
+        await call.message.answer(text=f'`{vpn_key}`', parse_mode="MarkdownV2")
+        await state.clear()

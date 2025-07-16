@@ -4,7 +4,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from src.handlers.users.start.text import StartButtons
-from src.handlers.users.vpn.text import VpnButton
+from src.handlers.users.vpn.text import VpnButton, VpnTexts
 
 
 class GetKeysCallBack(CallbackData, prefix="VpnKeys"):
@@ -12,23 +12,31 @@ class GetKeysCallBack(CallbackData, prefix="VpnKeys"):
 
 
 class ChooseCountryCallback(CallbackData, prefix="VpnCountry"):
-    action: str
+    country: str
 
 
 class ChooseServerCallback(CallbackData, prefix="VpnServer"):
+    server: str
+
+
+class ServerInfoCallback(CallbackData, prefix="VpnServerInfo"):
     action: str
 
 
-def keys_kb(get_key=False, keys=None, countries=None, servers=None):
+def keys_kb(get_key=False,
+            keys=None,
+            countries=None,
+            servers=None,
+            server_info=None):
     builder = InlineKeyboardBuilder()
     if get_key:
         builder.button(
             text=VpnButton.GetKey,
-            callback_data=ChooseCountryCallback(
+            callback_data=GetKeysCallBack(
                 action="get_key"
             )
         )
-    elif keys:
+    if keys:
         for key in keys:
             builder.button(
                 text=f"{key.server.country}, 100GB, {key.server.price}₽/месяц",
@@ -38,8 +46,8 @@ def keys_kb(get_key=False, keys=None, countries=None, servers=None):
         for country in countries:
             builder.button(
                 text=country.country,
-                callback_data=ChooseServerCallback(
-                    action=country.country
+                callback_data=ChooseCountryCallback(
+                    country=country.country
                 )
             )
     elif servers:
@@ -47,11 +55,16 @@ def keys_kb(get_key=False, keys=None, countries=None, servers=None):
             builder.button(
                 text=f"{server.country}, 100GB, {server.price}₽/месяц",
                 callback_data=ChooseServerCallback(
-                    action=server.country
+                    server=server.country
                 )
             )
+    elif server_info:
+        builder.button(
+            text=VpnButton.GetKey2,
+            callback_data=ServerInfoCallback(action="get_key"))
 
-    builder.button(text=StartButtons.CancelButton, callback_data="cancel")
+    builder.button(text=VpnButton.Cancel, callback_data="cancel") if server_info \
+        else builder.button(text=StartButtons.CancelButton, callback_data="cancel")
 
     builder.adjust(1)
 
@@ -63,37 +76,9 @@ class VpnCallbacks:
     KeysCB = GetKeysCallBack
     CountryCB = ChooseCountryCallback
     ServersCB = ChooseServerCallback
+    ServerInfoCB = ServerInfoCallback
 
 
 @dataclass
 class VpnKeyboardsCallBacks:
     Keys = keys_kb
-
-
-country = {
-    "Польша 🇵🇱": 'poland',
-    "Германия 🇩🇪": 'germany'
-}
-
-servers_info = {
-    "poland": {
-        "id": 0,
-        "country": "Польша",
-        "ip": "91.239.148.249",
-        "country_flag": "🇵🇱",
-        "type": "🌐 Outline",
-        "rating": "NA",
-        "price": "200",
-        "trial_period": "30 мин.",
-    },
-    "germany": {
-        "id": 1,
-        "country": "Германия",
-        "ip": "185.140.12.144",
-        "country_flag": "🇩🇪",
-        "type": "🌐 Outline",
-        "rating": "NA",
-        "price": "200",
-        "trial_period": "30 мин.",
-    },
-}

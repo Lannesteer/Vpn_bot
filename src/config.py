@@ -41,16 +41,19 @@ class CeleryConfig:
 
 @dataclass
 class VpnConfig:
+    api: str
     api_url: str
     cert_sha256: str
 
 
 vpn_config = {
-    "poland": VpnConfig(
+    "🇵🇱 Польша": VpnConfig(
+        api=os.environ.get("IP_POLAND"),
         api_url=os.environ.get("API_URL_POLAND"),
         cert_sha256=os.environ.get("CERT_SHA256_POLAND")
     ),
-    "germany": VpnConfig(
+    "🇩🇪 Германия": VpnConfig(
+        api=os.environ.get("IP_GERMANY"),
         api_url=os.environ.get("API_URL_GERMANY"),
         cert_sha256=os.environ.get("CERT_SHA256_GERMANY")
     )}

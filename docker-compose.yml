@@ -14,5 +14,6 @@ services:
     restart: always
     command: ["celery", "-A", "src.celery_worker.celery_worker", "worker", "--loglevel=info"]
     user: "1000:1000"
+
     env_file:
       - .env

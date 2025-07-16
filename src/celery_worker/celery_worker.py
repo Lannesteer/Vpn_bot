@@ -3,7 +3,7 @@ from celery import Celery
 from src.config import CeleryConfig
 
 celery_app = Celery(
-    'tasks', broker=CeleryConfig.broker,
+    'vpn_bot', broker=CeleryConfig.broker,
     backend=CeleryConfig.backend
 )
 

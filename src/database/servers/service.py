@@ -20,5 +20,14 @@ class ServerService(BaseService[Server]):
         servers = result.scalars().all()
         return servers
 
+    @session_handler
+    async def get_server_by_country(self, session, country: str):
+        result = await session.execute(
+            select(self.model)
+            .where(self.model.country == country)
+        )
+        server = result.scalars().one()
+        return server
+
 
 server_service = ServerService()

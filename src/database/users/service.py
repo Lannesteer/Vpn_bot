@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.database.keys.models import Key
 from src.database.base_class import BaseService
@@ -38,7 +39,9 @@ class UserService(BaseService[User]):
     @session_handler
     async def get_all_user_keys(self, session, user_id):
         result = await session.execute(
-            select(Key).where(Key.user_id == user_id)
+            select(Key)
+            .where(Key.user_id == user_id)
+            .options(selectinload(Key.server))
         )
         return result.scalars().all()
 

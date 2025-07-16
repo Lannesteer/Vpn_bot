@@ -1,18 +1,21 @@
-from datetime import date
+
+import uuid
+from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
 
 class KeyCreate(BaseModel):
-    id: int
+    id: uuid.UUID
     access_url: str
-    user_id: int
-    expiry_date: date
+    user_id: uuid.UUID
+    server_id: uuid.UUID
+    expiry_date: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class KeyUpdate(BaseModel):
-    expiry_date: date
+    expiry_date: datetime
 
     model_config = ConfigDict(from_attributes=True)
