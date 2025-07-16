@@ -29,9 +29,9 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from src.database.users import models
-from src.database.keys import models
-from src.database.servers import models
+from src.database.users.models import User
+from src.database.keys.models import Key
+from src.database.servers.models import Server
 
 target_metadata = Base.metadata
 
