@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from database.session import session_handler
+from src.database.session import session_handler
 from src.database.base_class import BaseService
 from src.database.keys.models import Key
 

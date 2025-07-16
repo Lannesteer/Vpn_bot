@@ -8,6 +8,7 @@ from src.database.keys.service import key_service
 from src.services.outline.manager import outline_manager
 from src.celery_worker.tasks import check_balance
 
+
 class VpnService:
     async def configurate_vpn_key(self, server, user):
         vpn_client = await outline_manager.vpn_client_init(
