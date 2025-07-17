@@ -43,7 +43,7 @@ class VpnUtils:
             return gb_limit
 
     @staticmethod
-    async def notify_users(bot: Bot, telegram_id, text, reply_markup=None, parse_mode=None):
+    async def notify_users(telegram_id, text, bot: Bot, reply_markup=None, parse_mode=None):
         await bot.send_message(chat_id=telegram_id,
                                text=text,
                                reply_markup=reply_markup,
@@ -51,23 +51,3 @@ class VpnUtils:
 
 
 vpn_utils = VpnUtils()
-
-# async def get_ping(host: str) -> float:
-#     """Проверяет пинг к серверу (возвращает ms или -1, если ошибка)"""
-#
-#     param = "-n" if platform.system().lower() == "windows" else "-c"
-#     try:
-#         result = await asyncio.create_subprocess_exec(
-#             "ping", param, "1", host,
-#             stdout=subprocess.PIPE,
-#             stderr=subprocess.PIPE
-#         )
-#         stdout, _ = await result.communicate()
-#
-#         output = stdout.decode()
-#         if "time=" in output:
-#             time_ms = output.split("time=")[-1].split(" ")[0]
-#             return float(time_ms)
-#         return -1
-#     except Exception:
-#         return -1
