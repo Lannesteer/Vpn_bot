@@ -10,7 +10,7 @@ from src.celery_worker.celery_worker import celery_app
 @celery_app.task
 def check_balance(telegram_id, key_id):
     """
-    Проверяет баланс пользователя и удаляет ключ, если недостаточно средств.
+    Проверяет баланс пользователя и удаляет ключ через 30 мин, если недостаточно средств.
     """
 
     async def async_task():
