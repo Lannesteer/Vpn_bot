@@ -1,5 +1,7 @@
+from src.database.keys.models import Key
+from src.database.servers.models import Server
+from src.database.users.models import User
 from celery import Celery
-
 from src.config import CeleryConfig
 
 celery_app = Celery(
