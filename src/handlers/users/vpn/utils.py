@@ -4,6 +4,8 @@ import re
 
 from aiogram import Bot
 
+from src.config import BotConfig
+
 
 class VpnUtils:
     @staticmethod
@@ -43,7 +45,8 @@ class VpnUtils:
             return gb_limit
 
     @staticmethod
-    async def notify_users(telegram_id, text, bot: Bot, reply_markup=None, parse_mode=None):
+    async def notify_users(telegram_id, text, reply_markup=None, parse_mode=None):
+        bot = Bot(token=BotConfig.access_token)
         await bot.send_message(chat_id=telegram_id,
                                text=text,
                                reply_markup=reply_markup,
