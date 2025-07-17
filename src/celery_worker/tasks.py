@@ -2,7 +2,7 @@ import asyncio
 
 from aiogram import Bot
 
-from config import BotConfig
+from src.config import BotConfig
 from src.database.keys.service import key_service
 from src.database.users.service import user_service
 from src.handlers.users.vpn.utils import vpn_utils
