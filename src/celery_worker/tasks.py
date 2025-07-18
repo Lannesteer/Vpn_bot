@@ -1,9 +1,28 @@
-from .session import loop, scoped_session
+from asyncio import current_task
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import async_scoped_session, AsyncSession
+
+from src.celery_worker.session import session_factory
 from src.database.keys.service import key_service
 from src.database.users.service import user_service
 from src.handlers.users.vpn.utils import vpn_utils
 from src.database.users.schemas import UserUpdate
 from src.celery_worker.celery_worker import celery_app
+
+
+@asynccontextmanager
+async def scoped_session() -> AsyncGenerator[AsyncSession, None]:
+    scoped_factory = async_scoped_session(
+        session_factory,
+        scopefunc=current_task,
+    )
+    try:
+        async with scoped_factory() as session:
+            yield session
+    finally:
+        await scoped_factory.remove()
 
 
 @celery_app.task()
