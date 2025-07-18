@@ -13,8 +13,8 @@ celery_app.conf.task_routes = {
     'src.celery_worker.task': {"queue": "balance_queue"}
 }
 
-celery_app.autodiscover_tasks(["src.celery_worker"])
+celery_app.autodiscover_tasks(["src.celery_worker.tasks"])
 
 
 if __name__ == "__main__":
-    celery_app.worker_main(["worker", "--loglevel=info", "--pool=threads"])
+    celery_app.worker_main(["worker", "--loglevel=info", "--pool=prefork"])
