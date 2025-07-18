@@ -5,7 +5,7 @@ from typing import AsyncGenerator
 from celery import current_task
 from sqlalchemy.ext.asyncio import async_scoped_session, AsyncSession
 
-from database.session import AsyncDatabase
+from src.database.session import AsyncDatabase
 
 loop = asyncio.get_event_loop()
 

@@ -1,4 +1,4 @@
-from celery_worker.session import loop, scoped_session
+from src.celery_worker.session import loop, scoped_session
 from src.database.keys.service import key_service
 from src.database.users.service import user_service
 from src.handlers.users.vpn.utils import vpn_utils
