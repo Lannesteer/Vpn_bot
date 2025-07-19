@@ -25,7 +25,7 @@ async def check_balance_async(telegram_id, key_id):
         await key_service.delete(key.id)
         vpn_client = await outline_manager.vpn_client_init(key.server)
         vpn_client.delete_key(key.id)
-        vpn_utils.notify_users(
+        vpn_utils.notify_users_from_celery(
             telegram_id=telegram_id,
             text=VpnTexts.PaymentError.format(
                 Server=key.server.country,

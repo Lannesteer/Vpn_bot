@@ -5,16 +5,16 @@ services:
     build: .
 
     env_file:
-      - dev.env
+      - .env
 
   celery:
     build: .
 
     env_file:
-      - dev.env
+      - .env
 
   flower:
 
     env_file:
-      - dev.env
+      - .env
 

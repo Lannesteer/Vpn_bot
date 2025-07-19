@@ -30,7 +30,7 @@ class VpnService:
 
             )
         )
-        check_balance.apply_async(args=[user.telegram_id, key.key_id], countdown=10)
+        check_balance.apply_async(args=[user.telegram_id, key.key_id], countdown=30)
 
         return f'{key.access_url}&prefix=POST%20'
 

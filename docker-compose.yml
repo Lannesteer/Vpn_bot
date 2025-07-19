@@ -12,7 +12,7 @@ services:
   celery:
     image: lannesteer/vpn-bot:latest
     restart: always
-    command: ["celery", "-A", "src.celery_worker.celery_worker", "worker", "--loglevel=info"]
+    command: celery -A src.celery_worker.celery_worker worker --loglevel=info -Q ${CELERY_QUEUE}
 
     env_file:
       - .env
