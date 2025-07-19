@@ -1,13 +1,19 @@
 import os
 from dataclasses import dataclass
+from pathlib import Path
 
+import dotenv
 from dotenv import load_dotenv
 from environs import Env
 
 load_dotenv()
 
+WORK_PATH: Path = Path(__file__).parent.parent
+config = dotenv.dotenv_values(WORK_PATH / 'dev.env')
+dev = config.get("DEV", "") == "True"
+
 env = Env()
-env.read_env('.env')
+env.read_env('dev.env' if dev else '.env')
 
 
 @dataclass
@@ -31,12 +37,14 @@ class RedisConfig:
     host = env.str("REDIS_HOST")
     port = env.str("REDIS_PORT")
     password = env.str("REDIS_PASSWORD")
+    redis_broker_url = env.str("REDIS_BROKER_URL")
 
 
 @dataclass
 class CeleryConfig:
     broker: str = f'redis://:{RedisConfig.password}@{RedisConfig.host}:{RedisConfig.port}/0'
     backend: str = f'redis://:{RedisConfig.password}@{RedisConfig.host}:{RedisConfig.port}/0'
+    celery_queue = env.str("CELERY_QUEUE")
 
 
 @dataclass

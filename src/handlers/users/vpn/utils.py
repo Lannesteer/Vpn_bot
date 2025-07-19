@@ -2,7 +2,7 @@ import asyncio
 import platform
 import re
 
-from aiogram import Bot
+import requests
 
 from src.config import BotConfig
 
@@ -45,12 +45,18 @@ class VpnUtils:
             return gb_limit
 
     @staticmethod
-    async def notify_users(telegram_id, text, reply_markup=None, parse_mode=None):
-        bot = Bot(token=BotConfig.access_token)
-        await bot.send_message(chat_id=telegram_id,
-                               text=text,
-                               reply_markup=reply_markup,
-                               parse_mode=parse_mode)
+    def notify_users_from_celery(telegram_id, text, reply_markup=None, parse_mode=None):
+        url = f"https://api.telegram.org/bot{BotConfig.access_token}/sendMessage"
+        payload = {
+            "chat_id": telegram_id,
+            "text": text
+        }
+        if reply_markup:
+            payload["reply_markup"] = reply_markup
+        if parse_mode:
+            payload["parse_mode"] = parse_mode
+
+        requests.post(url, json=payload)
 
 
 vpn_utils = VpnUtils()

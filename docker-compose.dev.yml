@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+
+    env_file:
+      - dev.env
+
+  celery:
+    build: .
+
+    env_file:
+      - dev.env
+
+  flower:
+
+    env_file:
+      - dev.env
+

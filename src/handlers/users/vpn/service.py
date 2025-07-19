@@ -2,7 +2,7 @@ import asyncio
 import uuid
 from datetime import datetime, timedelta
 
-from src.config import vpn_config
+from src.config import CeleryConfig
 from src.database.keys.schemas import KeyCreate
 from src.database.keys.service import key_service
 from src.services.outline.manager import outline_manager
@@ -11,10 +11,7 @@ from src.celery_worker.tasks import check_balance
 
 class VpnService:
     async def configurate_vpn_key(self, server, user):
-        vpn_client = await outline_manager.vpn_client_init(
-            api_url=vpn_config.get(f"{server.country}").api_url,
-            cert_sha256=vpn_config.get(f"{server.country}").cert_sha256)
-
+        vpn_client = await outline_manager.vpn_client_init(server)
         key = vpn_client.create_key(
             key_id=str(uuid.uuid4()),
             name=str(user.telegram_id),

@@ -5,16 +5,16 @@ from celery import Celery
 from src.config import CeleryConfig
 
 celery_app = Celery(
-    'vpn_bot', broker=CeleryConfig.broker,
-    backend=CeleryConfig.backend
+    'vpn_bot',
+    broker=CeleryConfig.broker,
+    backend=CeleryConfig.backend,
+    broker_connection_retry_on_startup=True,
+    include=['src.celery_worker.tasks']
 )
 
 celery_app.conf.task_routes = {
-    'src.celery_worker.task': {"queue": "balance_queue"}
+    'src.celery_worker.tasks.check_balance': {"queue": CeleryConfig.celery_queue}
 }
-
-celery_app.autodiscover_tasks(["src.celery_worker.tasks"])
-
 
 if __name__ == "__main__":
     celery_app.worker_main(["worker", "--loglevel=info", "--pool=prefork"])
