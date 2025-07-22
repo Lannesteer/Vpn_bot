@@ -1,5 +1,7 @@
 import asyncio
+from datetime import timedelta, datetime
 
+from src.database.keys.schemas import KeyUpdate
 from src.handlers.users.vpn.text import VpnTexts
 from src.services.outline.manager import outline_manager
 from src.database.keys.service import key_service
@@ -22,15 +24,27 @@ async def check_balance_async(telegram_id, key_id):
     key = await key_service.get_key(key_id)
 
     if user.balance < 200:
+        notify_text = VpnTexts.PaymentError.format(
+            Server=key.server.country,
+            Price=key.server.price
+        )
         await key_service.delete(key.id)
         vpn_client = await outline_manager.vpn_client_init(key.server)
         vpn_client.delete_key(key.id)
-        vpn_utils.notify_users_from_celery(
-            telegram_id=telegram_id,
-            text=VpnTexts.PaymentError.format(
-                Server=key.server.country,
-                Price=key.server.price)
-        )
     else:
-        data = UserUpdate(balance=user.balance - 200)
-        await user_service.update(data, user.id)
+        expire_date = datetime.now() + timedelta(days=30)
+        expire_date = expire_date.replace(microsecond=0)
+        notify_text = VpnTexts.PaymentSuccess.format(
+            Server=key.server.country,
+            Price=key.server.price,
+            ExpireDate=expire_date
+        )
+        user_data = UserUpdate(balance=user.balance - 200)
+        key_data = KeyUpdate(expiry_date=datetime.now() + timedelta(days=30))
+        await user_service.update(user.id, user_data)
+        await key_service.update(key.id, key_data)
+
+    vpn_utils.notify_users_from_celery(
+        telegram_id=telegram_id,
+        text=notify_text
+    )
