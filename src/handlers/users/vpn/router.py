@@ -3,8 +3,8 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.keys.service import key_service
-from services.outline.manager import outline_manager
+from src.database.keys.service import key_service
+from src.services.outline.manager import outline_manager
 from src.config import vpn_config
 from src.database.servers.service import server_service
 from src.database.users.service import user_service
