@@ -32,12 +32,12 @@ async def check_balance_async(telegram_id, key_id):
         vpn_client = await outline_manager.vpn_client_init(key.server)
         vpn_client.delete_key(key.id)
     else:
-        expire_date = datetime.now() + timedelta(days=30)
-        expire_date = expire_date.replace(microsecond=0)
+        expiry_date = datetime.now() + timedelta(days=30)
+        expiry_date = expiry_date.replace(microsecond=0)
         notify_text = VpnTexts.PaymentSuccess.format(
             Server=key.server.country,
             Price=key.server.price,
-            ExpireDate=expire_date
+            ExpiryDate=expiry_date
         )
         user_data = UserUpdate(balance=user.balance - 200)
         key_data = KeyUpdate(expiry_date=datetime.now() + timedelta(days=30))

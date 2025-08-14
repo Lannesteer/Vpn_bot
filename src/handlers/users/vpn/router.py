@@ -3,6 +3,8 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from database.keys.service import key_service
+from services.outline.manager import outline_manager
 from src.config import vpn_config
 from src.database.servers.service import server_service
 from src.database.users.service import user_service
@@ -85,3 +87,29 @@ async def server_info_get_key(call: CallbackQuery,
         await call.message.answer(text=VpnTexts.KeyDone.format(Price=server.price))
         await call.message.answer(text=f'`{vpn_key}`', parse_mode="MarkdownV2")
         await state.clear()
+
+
+@router.callback_query(VpnCallbacks.KeyInfoCB.filter(), StateFilter("*"))
+async def key_info(call: CallbackQuery, callback_data: VpnCallbacks.KeyInfoCB):
+    key = await key_service.get_key(callback_data.key_id)
+    text = None
+    if callback_data.key_id:
+        vpn_client = await outline_manager.vpn_client_init(key.server)
+        used_limit = vpn_utils.bytes_limit_converter(
+            vpn_client.get_key(str(key.id)).used_bytes
+        )
+        text = VpnTexts.KeyInfo.format(
+            Key=f"{key.server.country}, 100GB, {key.server.price}₽/месяц",
+            Date=key.created_at.replace(microsecond=0),
+            ExpiryDate=key.expiry_date.replace(microsecond=0),
+            UsedData=used_limit
+        )
+    elif callback_data.actions == "show_key":
+        text = None
+    elif callback_data.actions == "delete_key":
+        text = ""
+
+    await call.message.edit_text(
+        text=text,
+        reply_markup=VpnKeyboardsCallBacks.Keys(key_info=True)
+    )

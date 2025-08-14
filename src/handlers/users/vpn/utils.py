@@ -39,10 +39,15 @@ class VpnUtils:
             return -1
 
     @staticmethod
-    async def gb_limit_converter(key):
-        if key.data_limit is not None:
-            gb_limit = round(key.data_limit / (1024 ** 3))
-            return gb_limit
+    def bytes_limit_converter(limit):
+        if limit:
+            mb = limit / 1024 / 1024
+            if mb < 1024:
+                return f"{mb:.2f} МБ"
+            gb = mb / 1024
+            return f"{gb:.2f} ГБ"
+        else:
+            return "n/a"
 
     @staticmethod
     def notify_users_from_celery(telegram_id, text, reply_markup=None, parse_mode=None):
